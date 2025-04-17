@@ -7,11 +7,10 @@ import Navbar from "./components/NavBar";
 function App() {
   return (
     <>
-      <Navbar />
       <Routes>
         <Route path="/" element={<PokemonList />} />
         <Route path="/pokemon/:name" element={<PokemonDetail />} />
-        
+
       </Routes>
     </>
   );

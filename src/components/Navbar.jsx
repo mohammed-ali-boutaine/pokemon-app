@@ -3,11 +3,19 @@ import { Search, Menu, X, ChevronUp } from 'lucide-react';
 import logo from "../assets/logo.png";
 import { Link } from 'react-router-dom';
 
-const Navbar = () => {
+const Navbar = ({onSearch}) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   
+  const [query, setQuery] = useState("");
+
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setQuery(value);
+    onSearch(value);
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 300) {
@@ -73,8 +81,8 @@ const Navbar = () => {
                 type="text"
                 placeholder="Search Pokémon..."
                 className="w-full py-2 px-4 pl-10 rounded-full bg-white/10 backdrop-blur-sm text-white placeholder-white/70 border border-white/20 focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-transparent transition-all"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                value={query}
+                onChange={handleChange}
               />
               <div className="absolute left-3 top-2.5 text-white/70">
                 <Search size={20} />
