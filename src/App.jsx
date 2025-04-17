@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import PokemonList from "./pages/PokemonList";
 import PokemonDetail from "./pages/PokemonDetail";
-import Navbar from "./components/NavBar";
+// import Navbar from "./components/NavBar";
 // import NavBar from "";
 
 function App() {
