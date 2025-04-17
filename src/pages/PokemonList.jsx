@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import PokemonCard from "../components/PokemonCard";
 import { useEffect, useState, useRef } from "react";
-import Navbar from "../components/NavBar";
+import Navbar from "../components/Navbar";
 
 const PokemonList = () => {
   // console.log();

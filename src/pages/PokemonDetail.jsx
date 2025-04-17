@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
-import Navbar from "../components/NavBar";
+import Navbar from "../components/Navbar";
 // Import the color utility
 import { getTypeColor } from "../utils/colors";
 

@@ -46,8 +46,6 @@ const Navbar = ({onSearch}) => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  // For placeholder purposes since we can't import external images
-  const logoUrl = "/api/placeholder/180/60";
 
   const nav = (
     <nav className="bg-gradient-to-r from-red-600 to-red-500 ">
@@ -95,7 +93,7 @@ const Navbar = ({onSearch}) => {
         <div className="md:hidden flex items-center justify-between">
           {/* Logo */}
           <img 
-            src={logoUrl} 
+            src={logo} 
             alt="Pokémon Logo" 
             className="h-8 w-auto"
           />
