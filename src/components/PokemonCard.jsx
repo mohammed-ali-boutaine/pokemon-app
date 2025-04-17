@@ -3,6 +3,9 @@ import { useState } from 'react';
 // import { typeColor } from "./utils/colors";
 
 function PokemonCard({ pokemon, onNavigate }) {
+
+    console.log(pokemon);
+
   const [liked, setLiked] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
 

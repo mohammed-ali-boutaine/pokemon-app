@@ -1,7 +1,11 @@
+import { useNavigate } from "react-router-dom";
 import PokemonCard from "../components/PokemonCard";
 import { useEffect, useState, useRef } from "react";
 
 const PokemonList = () => {
+  // console.log();
+  
+  const navigate = useNavigate();
   const [pokemonsList, setPokemonsList] = useState([]);
   const [page, setPage] = useState(0); // Each page = offset
   const [hasMore, setHasMore] = useState(true);
@@ -58,13 +62,17 @@ const PokemonList = () => {
     };
   }, [hasMore]);
 
-  // let loading = false;
+  const  onNavigate = (path) => {
+    navigate(path)
+  }
+
+
   return (
     <>
       <section className="min-h-[91vh]">
         <div className="px-16 py-8 grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {pokemonsList.map((pokemon, index) => (
-            <PokemonCard key={index} pokemon={pokemon} />
+            <PokemonCard key={index} pokemon={pokemon} onNavigate={onNavigate}/>
           ))}
         </div>
         <div ref={loaderRef} className="text-center p-4 text-gray-500">
