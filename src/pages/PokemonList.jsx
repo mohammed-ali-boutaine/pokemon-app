@@ -1,50 +1,74 @@
 import PokemonCard from "../components/PokemonCard";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 const PokemonList = () => {
-  let [pokemonsList, setPokemonsList] = useState([]);
+  const [pokemonsList, setPokemonsList] = useState([]);
+  const [page, setPage] = useState(0); // Each page = offset
+  const [hasMore, setHasMore] = useState(true);
+  const loaderRef = useRef(null);
+  const limit = 20;
 
-  async function getAllPokemonWithDetails() {
-    let allPokemon = [];
-    let url = "https://pokeapi.co/api/v2/pokemon?limit=100&offset=0";
-
-    // Fetch all Pokémon names & URLs (handling pagination)
-    while (url) {
-      const response = await fetch(url);
-      const data = await response.json();
-
-      allPokemon = allPokemon.concat(data.results);
-      url = data.next; // API provides the next URL (null if no more pages)
-    }
-
-    // Fetch details for each Pokémon
+  // Fetch a single page of pokemon + their details
+  async function getPokemonWithDetails(offset = 0) {
+    let url = `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`;
+    const response = await fetch(url);
+    const data = await response.json();
     const detailedPokemon = await Promise.all(
-      allPokemon.map(async (pokemon) => {
-        const response = await fetch(
+      data.results.map(async (pokemon) => {
+        const res = await fetch(
           `https://pokeapi.co/api/v2/pokemon/${pokemon.name}`
         );
-        return response.json();
+        return res.json();
       })
     );
-    return detailedPokemon;
+
+    return {
+      pokemons: detailedPokemon,
+      next: data.next,
+    };
   }
+
   useEffect(() => {
-    async function fetchData() {
-      const data = await getAllPokemonWithDetails();
-      setPokemonsList(data);
-    }
+    const fetchData = async () => {
+      const { pokemons, next } = await getPokemonWithDetails(page * limit);
+      setPokemonsList((prev) => [...prev, ...pokemons]);
+      if (!next) setHasMore(false);
+    };
 
     fetchData();
-  }, []);
-  let loading = false;
+  }, [page]);
+
+  // IntersectionObserver to load more when bottom is visible
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const first = entries[0];
+        if (first.isIntersecting && hasMore) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      },
+      { threshold: 1 }
+    );
+
+    const currentLoader = loaderRef.current;
+    if (currentLoader) observer.observe(currentLoader);
+
+    return () => {
+      if (currentLoader) observer.unobserve(currentLoader);
+    };
+  }, [hasMore]);
+
+  // let loading = false;
   return (
     <>
       <section className="min-h-[91vh]">
         <div className="px-16 py-8 grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {!loading &&
-            pokemonsList.map((pokemon, index) => {
-              return <PokemonCard key={index} pokemon={pokemon} />;
-            })}
+          {pokemonsList.map((pokemon, index) => (
+            <PokemonCard key={index} pokemon={pokemon} />
+          ))}
+        </div>
+        <div ref={loaderRef} className="text-center p-4 text-gray-500">
+          {hasMore ? "Loading more Pokémon..." : "No more Pokémon"}
         </div>
       </section>
     </>
