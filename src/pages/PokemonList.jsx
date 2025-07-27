@@ -1,9 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import PokemonCard from "../components/PokemonCard";
 import { useEffect, useState, useRef } from "react";
-import Navbar from "../components/Navbar";
 
-const PokemonList = () => {
+const PokemonList = ({ searchQuery }) => {
   // console.log();
   const [filtered, setFiltered] = useState([]);
   const navigate = useNavigate();
@@ -12,14 +11,6 @@ const PokemonList = () => {
   const [hasMore, setHasMore] = useState(true);
   const loaderRef = useRef(null);
   const limit = 20;
-
-  const handleSearch = (query) => {
-    const filteredResults = pokemonsList.filter(pokemon =>
-      pokemon.name.toLowerCase().includes(query.toLowerCase())
-    );
-    setFiltered(filteredResults);
-  };
-
 
   // Fetch a single page of pokemon + their details
   async function getPokemonWithDetails(offset = 0) {
@@ -51,6 +42,18 @@ const PokemonList = () => {
     fetchData();
   }, [page]);
 
+  // Handle search filtering
+  useEffect(() => {
+    if (searchQuery && searchQuery.trim()) {
+      const filteredResults = pokemonsList.filter((pokemon) =>
+        pokemon.name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFiltered(filteredResults);
+    } else {
+      setFiltered([]);
+    }
+  }, [searchQuery, pokemonsList]);
+
   // IntersectionObserver to load more when bottom is visible
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -71,27 +74,30 @@ const PokemonList = () => {
     };
   }, [hasMore]);
 
-  const  onNavigate = (path) => {
-    navigate(path)
-  }
+  const onNavigate = (path) => {
+    navigate(path);
+  };
 
   // {pokemonsList.map((pokemon, index) => (
   //   <PokemonCard key={index} pokemon={pokemon} onNavigate={onNavigate}/>
   // ))}
   return (
-    <>
-    <Navbar onSearch={handleSearch}/>
-      <section className="min-h-[91vh]">
-        <div className="px-16 py-8 grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {(filtered.length > 0 ? filtered : pokemonsList).map((pokemon,index) => (
-        <PokemonCard key={index} pokemon={pokemon} onNavigate={onNavigate}/>
-      ))}
-        </div>
-        <div ref={loaderRef} className="text-center p-4 text-gray-500">
-          {hasMore ? "Loading more Pokémon..." : "No more Pokémon"}
-        </div>
-      </section>
-    </>
+    <section className="min-h-[91vh]">
+      <div className="px-16 py-8 grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {(filtered.length > 0 ? filtered : pokemonsList).map(
+          (pokemon, index) => (
+            <PokemonCard
+              key={index}
+              pokemon={pokemon}
+              onNavigate={onNavigate}
+            />
+          )
+        )}
+      </div>
+      <div ref={loaderRef} className="text-center p-4 text-gray-500">
+        {hasMore ? "Loading more Pokémon..." : "No more Pokémon"}
+      </div>
+    </section>
   );
 };
 

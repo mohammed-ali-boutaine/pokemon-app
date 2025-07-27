@@ -1,19 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { Search, Menu, X, ChevronUp } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { Search, Menu, X, ChevronUp } from "lucide-react";
 import logo from "../assets/logo.png";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
-const Navbar = ({onSearch}) => {
-  const [searchTerm, setSearchTerm] = useState('');
+const Navbar = ({ onSearch, onLogoClick }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
-  
+
   const [query, setQuery] = useState("");
 
   const handleChange = (e) => {
     const value = e.target.value;
     setQuery(value);
-    onSearch(value);
+    if (onSearch) {
+      onSearch(value);
+    }
   };
 
   useEffect(() => {
@@ -24,21 +25,21 @@ const Navbar = ({onSearch}) => {
         setShowScrollTop(false);
       }
     };
-    
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-  
+
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: 'smooth'
+      behavior: "smooth",
     });
   };
-  
+
   const handleSearch = (e) => {
     e.preventDefault();
-    console.log('Searching for:', searchTerm);
+    console.log("Searching for:", query);
     // Here you would typically implement the actual search functionality
   };
 
@@ -46,6 +47,17 @@ const Navbar = ({onSearch}) => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const handleNavClick = () => {
+    setIsMenuOpen(false);
+  };
+
+  const handleLogoClick = () => {
+    setQuery("");
+    setIsMenuOpen(false);
+    if (onLogoClick) {
+      onLogoClick();
+    }
+  };
 
   const nav = (
     <nav className="bg-gradient-to-r from-red-600 to-red-500 ">
@@ -54,24 +66,38 @@ const Navbar = ({onSearch}) => {
         <div className="hidden md:flex items-center justify-between">
           <div className="flex items-center space-x-8">
             {/* Pokémon Logo */}
-            <Link to='/'>
-            
-            <img 
-              src={logo} 
-              alt="Pokémon Logo" 
-              className="h-10 w-auto"
-              />
-            
-              </Link>
+            <Link to="/" onClick={handleLogoClick}>
+              <img src={logo} alt="Pokémon Logo" className="h-10 w-auto" />
+            </Link>
             {/* Navigation Links */}
             <div className="flex space-x-6">
-              <a href="#" className="text-white hover:text-yellow-300 font-medium transition-colors">Pokédex</a>
-              <a href="#" className="text-white hover:text-yellow-300 font-medium transition-colors">Games</a>
-              <a href="#" className="text-white hover:text-yellow-300 font-medium transition-colors">Community</a>
-              <a href="#" className="text-white hover:text-yellow-300 font-medium transition-colors">News</a>
+              <Link
+                to="/"
+                className="text-white hover:text-yellow-300 font-medium transition-colors"
+              >
+                Pokédex
+              </Link>
+              <a
+                href="#"
+                className="text-white hover:text-yellow-300 font-medium transition-colors"
+              >
+                Games
+              </a>
+              <a
+                href="#"
+                className="text-white hover:text-yellow-300 font-medium transition-colors"
+              >
+                Community
+              </a>
+              <a
+                href="#"
+                className="text-white hover:text-yellow-300 font-medium transition-colors"
+              >
+                News
+              </a>
             </div>
           </div>
-          
+
           {/* Search Bar */}
           <form onSubmit={handleSearch} className="w-1/3">
             <div className="relative">
@@ -88,20 +114,18 @@ const Navbar = ({onSearch}) => {
             </div>
           </form>
         </div>
-        
+
         {/* Mobile Navigation */}
         <div className="md:hidden flex items-center justify-between">
           {/* Logo */}
-          <img 
-            src={logo} 
-            alt="Pokémon Logo" 
-            className="h-8 w-auto"
-          />
-          
+          <Link to="/" onClick={handleLogoClick}>
+            <img src={logo} alt="Pokémon Logo" className="h-8 w-auto" />
+          </Link>
+
           {/* Mobile Search and Menu Toggle */}
           <div className="flex items-center space-x-2">
-            <button 
-              onClick={toggleMenu} 
+            <button
+              onClick={toggleMenu}
               className="p-2 text-white focus:outline-none"
               aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             >
@@ -109,7 +133,7 @@ const Navbar = ({onSearch}) => {
             </button>
           </div>
         </div>
-        
+
         {/* Mobile Menu */}
         {isMenuOpen && (
           <div className="md:hidden mt-3 pb-3 border-t border-white/20">
@@ -119,35 +143,59 @@ const Navbar = ({onSearch}) => {
                   type="text"
                   placeholder="Search Pokémon..."
                   className="w-full py-2 px-4 pl-10 rounded-full bg-white/10 backdrop-blur-sm text-white placeholder-white/70 border border-white/20 focus:outline-none focus:ring-2 focus:ring-yellow-300 focus:border-transparent"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  value={query}
+                  onChange={handleChange}
                 />
                 <div className="absolute left-3 top-2.5 text-white/70">
                   <Search size={20} />
                 </div>
               </div>
             </form>
-            
+
             <div className="flex flex-col space-y-3 px-2">
-              <a href="#" className="text-white hover:text-yellow-300 font-medium py-2">Pokédex</a>
-              <a href="#" className="text-white hover:text-yellow-300 font-medium py-2">Games</a>
-              <a href="#" className="text-white hover:text-yellow-300 font-medium py-2">Community</a>
-              <a href="#" className="text-white hover:text-yellow-300 font-medium py-2">News</a>
+              <Link
+                to="/"
+                className="text-white hover:text-yellow-300 font-medium py-2"
+                onClick={handleNavClick}
+              >
+                Pokédex
+              </Link>
+              <a
+                href="#"
+                className="text-white hover:text-yellow-300 font-medium py-2"
+                onClick={handleNavClick}
+              >
+                Games
+              </a>
+              <a
+                href="#"
+                className="text-white hover:text-yellow-300 font-medium py-2"
+                onClick={handleNavClick}
+              >
+                Community
+              </a>
+              <a
+                href="#"
+                className="text-white hover:text-yellow-300 font-medium py-2"
+                onClick={handleNavClick}
+              >
+                News
+              </a>
             </div>
           </div>
         )}
       </div>
     </nav>
   );
-  
+
   return (
     <>
       {/* Main Navigation Component */}
       {nav}
-      
+
       {/* Scroll to Top Button */}
       {showScrollTop && (
-        <button 
+        <button
           onClick={scrollToTop}
           className="fixed bottom-6 right-6 p-3 rounded-full bg-red-600 shadow-lg text-white hover:bg-red-700 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-red-400 z-50"
           aria-label="Scroll to top"

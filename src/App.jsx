@@ -1,18 +1,27 @@
+import React, { useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import PokemonList from "./pages/PokemonList";
 import PokemonDetail from "./pages/PokemonDetail";
-// import Navbar from "./components/NavBar";
-// import NavBar from "";
+import Layout from "./components/Layout";
 
 function App() {
-  return (
-    <>
-      <Routes>
-        <Route path="/" element={<PokemonList />} />
-        <Route path="/pokemon/:name" element={<PokemonDetail />} />
+  const [searchQuery, setSearchQuery] = useState("");
 
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+  };
+
+  const handleLogoClick = () => {
+    setSearchQuery("");
+  };
+
+  return (
+    <Layout onSearch={handleSearch} onLogoClick={handleLogoClick}>
+      <Routes>
+        <Route path="/" element={<PokemonList searchQuery={searchQuery} />} />
+        <Route path="/pokemon/:name" element={<PokemonDetail />} />
       </Routes>
-    </>
+    </Layout>
   );
 }
 
